@@ -1,0 +1,45 @@
+{
+  "name": "vite-plugin-lucky",
+  "version": "0.1.0",
+  "description": "A plugin to make Vite play nice with Lucky Framework",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "crystal",
+    "lucky",
+    "luckyframework",
+    "plugin",
+    "vite",
+    "vite-plugin",
+    "vitejs"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean --dts",
+    "release": "npm run build"
+  },
+  "author": "wout <hi@wout.codes>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wout/vite-plugin-lucky.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "picocolors": "^1.0.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.3",
+    "vite": "^4.2.1"
+  },
+  "homepage": "https://github.com/wout/vite-plugin-lucky#readme"
+}

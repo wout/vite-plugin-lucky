@@ -49,7 +49,7 @@ export default (
  * Loads and parses the Lucky Vite config file.
  *
  * @param configPath - Path to the config file
- * @returns The parsed config.
+ * @returns The parsed config
  */
 function loadConfig(
   configPath: string
@@ -66,8 +66,8 @@ function loadConfig(
 /**
  * Resolves alias map to a Vite alias mapping.
  *
- * @param [aliasMap={}] - The lucky vite alias map.
- * @returns The Vite alias mapping.
+ * @param [aliasMap={}] - The lucky vite alias map
+ * @returns The Vite alias mapping
  */
 function resolveAliases(
   aliasMap: AliasMap = {}
@@ -80,8 +80,8 @@ function resolveAliases(
 /**
  * Generates the server host configuration.
  *
- * @param config - The main config object.
- * @returns The server configuration.
+ * @param config - The main config object
+ * @returns The server configuration
  */
 function configureServer(
   {
@@ -104,8 +104,8 @@ function configureServer(
 /**
  * Scans the entry directory for entry scripts.
  *
- * @param root - The entry root dir.
- * @returns A list of entry scripts.
+ * @param root - The entry root dir
+ * @returns A list of entry scripts
  */
 function findEntryScripts(
   root: string
@@ -116,8 +116,8 @@ function findEntryScripts(
 /**
  * Determines the file path of an asset based on its extension.
  *
- * @param {name} - Object with a name property.
- * @returns The asset file path.
+ * @param {name} - Object with a name property
+ * @returns The asset file path
  */
 function determineAssetFilePath(
   {  name = '' }: PreRenderedAsset
@@ -134,9 +134,9 @@ function determineAssetFilePath(
 /**
  * Formats an asset path.
  *
- * @param [dir] - The target dir.
- * @param [ext=[extname]] - The extension.
- * @returns The asset's formatted file path.
+ * @param [dir] - The target dir
+ * @param [ext=[extname]] - The extension
+ * @returns The asset's formatted file path
  */
 function formatAssetFilePath(
   dir?: string,

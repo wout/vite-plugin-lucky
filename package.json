@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --clean --dts",
-    "release": "npm run build"
+    "release": "npm run build && bumpp"
   },
   "author": "wout <hi@wout.codes>",
   "repository": {
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@types/node": "^18.15.11",
     "picocolors": "^1.0.0",
+    "bumpp": "^9.1.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.3",
     "vite": "^4.2.1"

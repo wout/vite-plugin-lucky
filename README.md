@@ -8,13 +8,20 @@ This plugin was developed to integrate Vite with Lucky as seamlessly as possible
 
 ## Usage
 
-Install the plugin
+Install the plugin using your favourite package manager:
 
 ```bash
-$ npm i -D vite-plugin-lucky
+# using npm
+$ npm install --save-dev vite-plugin-lucky
+
+# using yarn
+$ yarn add --dev vite-plugin-lucky
+
+# using pnpm
+$ pnpm add --save-dev vite-plugin-lucky
 ```
 
-Then add it to `vite.config.js`:
+Then initialize the plugin in the `vite.config.js`:
 
 ```js
 import { defineConfig } from 'vite'
@@ -29,7 +36,7 @@ export default defineConfig({
 
 **Note**: The [lucky_vite](https://github.com/wout/lucky_vite) shard will generate this file for you.
 
-In case yout want the shared `lucky_vite.json` config in another directory, the new path can be passed as a configuration option:
+In case yout want the shared `lucky_vite.json` config in another directory, the new path can be passed as the `configPath` property:
 
 ```js
 LuckyPlugin({

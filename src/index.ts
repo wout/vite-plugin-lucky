@@ -59,21 +59,22 @@ function loadConfig(
     entry: 'entry',
     host: '127.0.0.1',
     port: 3010,
-    root: 'src/js'
+    root: 'src/js',
+    aliases: ['js', 'css', 'images', 'fonts']
   }, JSON.parse(readFileSync(configPath, {encoding: 'utf8', flag: 'r'})))
 }
 
 /**
  * Resolves alias map to a Vite alias mapping.
  *
- * @param [aliasMap={}] - The lucky vite alias map
+ * @param [dirs=[]] - The lucky vite alias map
  * @returns The Vite alias mapping
  */
 function resolveAliases(
-  aliasMap: AliasMap = {}
+  dirs: string[] = []
 ): AliasOptions {
-  return Object.entries(aliasMap).map(alias => ({
-    find: alias[0], replacement: resolve(LUCKY_ROOT, alias[1])
+  return dirs.map(alias => ({
+    find: `@${alias}`, replacement: resolve(LUCKY_ROOT, `src/${alias}`)
   }))
 }
 
@@ -147,8 +148,6 @@ function formatAssetFilePath(
 }
 
 
-export type AliasMap = { [key: string]: string }
-
 export interface PreRenderedAsset   {
   name: string | undefined
   source: string | Uint8Array
@@ -166,9 +165,9 @@ export interface PluginConfig {
 
 export interface LuckyViteConfig {
   /**
-   * An object mapping aliases to directories relative to Lucky's root.
+   * A list of directories in Lucky's src dir to create aliases for.
    */
-  aliases?: AliasMap,
+  aliases?: string[],
 
   /**
    * Directory withing the JavaScript root dir containing the entry scripts.

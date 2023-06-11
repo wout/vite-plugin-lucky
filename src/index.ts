@@ -122,7 +122,7 @@ function findEntryScripts(
 function determineAssetFilePath(
   {  name = '' }: PreRenderedAsset
 ): string {
-  if (/\.(gif|jpe?g|png|svg)$/.test(name))
+  if (/\.(gif|jpe?g|png|webp|svg)$/.test(name))
     return formatAssetFilePath('images')
   if (/\.css$/.test(name))
     return formatAssetFilePath('css')

@@ -36,7 +36,7 @@ export default defineConfig({
 
 **Note**: The [lucky_vite](https://github.com/wout/lucky_vite) shard will generate this file for you.
 
-In case yout want the shared `lucky_vite.json` config in another directory, the new path can be passed as the `configPath` property:
+In case you have the shared `lucky_vite.json` config in another directory, the new path can be passed as the `configPath` property:
 
 ```js
 LuckyPlugin({

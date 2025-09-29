@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-lucky",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A plugin to make Vite play nice with Lucky Framework",
   "type": "module",
   "main": "dist/index.cjs",
@@ -36,11 +36,11 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.15.11",
-    "picocolors": "^1.0.0",
     "bumpp": "^9.1.0",
-    "tsup": "^6.7.0",
+    "picocolors": "^1.0.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.0.3",
-    "vite": "^4.2.1"
+    "vite": "^6.3.6"
   },
   "homepage": "https://github.com/wout/vite-plugin-lucky#readme"
 }

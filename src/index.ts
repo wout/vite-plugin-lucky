@@ -17,7 +17,9 @@ export default (
     config() {
       return {
         root: root,
-        base: viteBase(config),
+        base: ['development', 'test'].includes(LUCKY_ENV)
+          ? '/'
+          : viteBase(config),
 
         resolve: {
           alias: resolveAliases(config.aliases),

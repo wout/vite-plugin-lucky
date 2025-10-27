@@ -6,7 +6,7 @@ const LUCKY_ENV = process.env['LUCKY_ENV'] || 'development'
 const LUCKY_ROOT = process.cwd()
 
 export default (
-  { configPath = 'config/lucky_vite.json' } = {} as PluginConfig
+  { configPath = 'config/lucky_vite.json' } = {} as PluginConfig,
 ): Plugin => {
   const config = loadConfig(configPath)
   const root = join(LUCKY_ROOT, config.root, config.entry)
@@ -17,9 +17,10 @@ export default (
     config() {
       return {
         root: root,
+        base: viteBase(config),
 
         resolve: {
-          alias: resolveAliases(config.aliases)
+          alias: resolveAliases(config.aliases),
         },
 
         server: configureServer(config),
@@ -36,12 +37,12 @@ export default (
             output: {
               entryFileNames: formatAssetFilePath('js', '.js'),
               chunkFileNames: formatAssetFilePath('js', '.js'),
-              assetFileNames: determineAssetFilePath
-            }
-          }
-        }
+              assetFileNames: determineAssetFilePath,
+            },
+          },
+        },
       }
-    }
+    },
   }
 }
 
@@ -51,17 +52,30 @@ export default (
  * @param configPath - Path to the config file
  * @returns The parsed config
  */
-function loadConfig(
-  configPath: string
-): LuckyViteConfig {
-  return Object.assign({
-    outDir: 'public/assets',
-    entry: 'entry',
-    host: '127.0.0.1',
-    port: 3010,
-    root: 'src/js',
-    aliases: ['js', 'css', 'images', 'fonts']
-  }, JSON.parse(readFileSync(configPath, {encoding: 'utf8', flag: 'r'})))
+function loadConfig(configPath: string): LuckyViteConfig {
+  return Object.assign(
+    {
+      outDir: 'public/assets',
+      entry: 'entry',
+      host: '127.0.0.1',
+      port: 3010,
+      root: 'src/js',
+      aliases: ['js', 'css', 'images', 'fonts'],
+    },
+    JSON.parse(readFileSync(configPath, { encoding: 'utf8', flag: 'r' })),
+  )
+}
+
+/**
+ * Resolves the vite base for production output.
+ *
+ * @param config - The main config object
+ * @returns The base path
+ */
+function viteBase({ base = null, outDir }: LuckyViteConfig): string {
+  return base != null
+    ? base
+    : `/${outDir.replace(/^public\/?/, '')}`.replace(/\/$/, '') + '/'
 }
 
 /**
@@ -70,11 +84,10 @@ function loadConfig(
  * @param [dirs=[]] - The lucky vite alias map
  * @returns The Vite alias mapping
  */
-function resolveAliases(
-  dirs: string[] = []
-): AliasOptions {
-  return dirs.map(alias => ({
-    find: `@${alias}`, replacement: resolve(LUCKY_ROOT, `src/${alias}`)
+function resolveAliases(dirs: string[] = []): AliasOptions {
+  return dirs.map((alias) => ({
+    find: `@${alias}`,
+    replacement: resolve(LUCKY_ROOT, `src/${alias}`),
   }))
 }
 
@@ -84,21 +97,19 @@ function resolveAliases(
  * @param config - The main config object
  * @returns The server configuration
  */
-function configureServer(
-  {
-    https = false,
-    host,
-    port ,
-    origin
-  }: LuckyViteConfig
-): object {
+function configureServer({
+  https = false,
+  host,
+  port,
+  origin,
+}: LuckyViteConfig): object {
   if (typeof host === 'boolean') host = '0.0.0.0'
-  const uri = new URL(origin ||= `http${https ? 's' : ''}://${host}:${port}`)
+  const uri = new URL((origin ||= `http${https ? 's' : ''}://${host}:${port}`))
   return {
     origin,
     host: uri.hostname,
     port: uri.port,
-    https: uri.protocol === 'https:'
+    https: uri.protocol === 'https:',
   }
 }
 
@@ -108,10 +119,8 @@ function configureServer(
  * @param root - The entry root dir
  * @returns A list of entry scripts
  */
-function findEntryScripts(
-  root: string
-): string[] {
-  return readdirSync(resolve(root)).map(entry => resolve(join(root, entry)))
+function findEntryScripts(root: string): string[] {
+  return readdirSync(resolve(root)).map((entry) => resolve(join(root, entry)))
 }
 
 /**
@@ -120,15 +129,11 @@ function findEntryScripts(
  * @param {name} - Object with a name property
  * @returns The asset file path
  */
-function determineAssetFilePath(
-  {  name = '' }: PreRenderedAsset
-): string {
-  if (/\.(gif|jpe?g|png|webp|svg)$/.test(name))
+function determineAssetFilePath({ name = '' }: PreRenderedAsset): string {
+  if (/\.(gif|jpe?g|png|webp|avif|svg)$/.test(name))
     return formatAssetFilePath('images')
-  if (/\.css$/.test(name))
-    return formatAssetFilePath('css')
-  if (/\.woff2?$/.test(name))
-    return formatAssetFilePath('fonts')
+  if (/\.css$/.test(name)) return formatAssetFilePath('css')
+  if (/\.woff2?$/.test(name)) return formatAssetFilePath('fonts')
   return formatAssetFilePath()
 }
 
@@ -139,16 +144,12 @@ function determineAssetFilePath(
  * @param [ext=[extname]] - The extension
  * @returns The asset's formatted file path
  */
-function formatAssetFilePath(
-  dir?: string,
-  ext: string = '[extname]'
-): string {
+function formatAssetFilePath(dir?: string, ext: string = '[extname]'): string {
   const name = `[name].[hash]${ext}`
   return dir ? `${dir}/${name}` : name
 }
 
-
-export interface PreRenderedAsset   {
+export interface PreRenderedAsset {
   name: string | undefined
   source: string | Uint8Array
   type: 'asset'
@@ -167,47 +168,54 @@ export interface LuckyViteConfig {
   /**
    * A list of directories in Lucky's src dir to create aliases for.
    */
-  aliases?: string[],
+  aliases?: string[]
+
+  /**
+   * The public base path for assets. If not provided, it will be derived from outDir.
+   *
+   * @default null (auto-derived from outDir)
+   */
+  base?: string | null
 
   /**
    * Directory withing the JavaScript root dir containing the entry scripts.
    *
    * @default entry
    */
-  entry: string,
+  entry: string
 
   /**
    * Host for the vite server.
    *
    * @default localhost
    */
-  host?: string,
+  host?: string
 
   /**
    * Use https or not.
    *
    * @default false
    */
-  https?: boolean,
+  https?: boolean
 
   /**
    * Full uri of the vite server (alternative to `host` and `port`)
    */
-  origin?: string,
+  origin?: string
 
   /**
    * The output directory for the manifest and packaged files.
    *
    * @default public/assets
    */
-  outDir: string,
+  outDir: string
 
   /**
    * Port for the vite server.
    *
    * @default 3010
    */
-  port?: number | string,
+  port?: number | string
 
   /**
    * The JavaScript root dir of the project.

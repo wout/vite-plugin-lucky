@@ -1,5 +1,5 @@
 import type { AliasOptions, Plugin } from 'vite'
-import { readFileSync, readdirSync } from 'fs'
+import { existsSync, readFileSync, readdirSync, rmSync } from 'fs'
 import { join, resolve } from 'path'
 
 const LUCKY_ENV = process.env['LUCKY_ENV'] || 'development'
@@ -17,7 +17,6 @@ export default (
     config() {
       return {
         root: root,
-        base: viteBase(config),
 
         resolve: {
           alias: resolveAliases(config.aliases),
@@ -27,8 +26,8 @@ export default (
 
         build: {
           outDir: resolve(LUCKY_ROOT, config.outDir),
-          sourcemap: LUCKY_ENV === 'production',
-          emptyOutDir: true,
+          sourcemap: !/test|development/.test(LUCKY_ENV),
+          emptyOutDir: false,
           manifest: true,
 
           rollupOptions: {
@@ -43,6 +42,17 @@ export default (
         },
       }
     },
+
+    buildStart() {
+      const outDir = resolve(LUCKY_ROOT, config.outDir)
+      const dirsToClean = ['js', 'css', 'images', 'fonts', '.vite']
+
+      for (const dir of dirsToClean) {
+        const fullPath = join(outDir, dir)
+        if (existsSync(fullPath))
+          rmSync(fullPath, { recursive: true, force: true })
+      }
+    },
   }
 }
 
@@ -55,7 +65,7 @@ export default (
 function loadConfig(configPath: string): LuckyViteConfig {
   return Object.assign(
     {
-      outDir: 'public/assets',
+      outDir: 'public',
       entry: 'entry',
       host: '127.0.0.1',
       port: 3010,
@@ -64,18 +74,6 @@ function loadConfig(configPath: string): LuckyViteConfig {
     },
     JSON.parse(readFileSync(configPath, { encoding: 'utf8', flag: 'r' })),
   )
-}
-
-/**
- * Resolves the vite base for production output.
- *
- * @param config - The main config object
- * @returns The base path
- */
-function viteBase({ base = null, outDir }: LuckyViteConfig): string {
-  return base != null
-    ? base
-    : `/${outDir.replace(/^public\/?/, '')}`.replace(/\/$/, '') + '/'
 }
 
 /**
@@ -169,13 +167,6 @@ export interface LuckyViteConfig {
    * A list of directories in Lucky's src dir to create aliases for.
    */
   aliases?: string[]
-
-  /**
-   * The public base path for assets. If not provided, it will be derived from outDir.
-   *
-   * @default null (auto-derived from outDir)
-   */
-  base?: string | null
 
   /**
    * Directory withing the JavaScript root dir containing the entry scripts.
